@@ -120,10 +120,92 @@ body {
   font-size: 12px;
   color: #556677;
 }
+.expiry-banner {
+  margin-top: 20px;
+  background: rgba(255,71,87,0.08);
+  border: 1px solid rgba(255,71,87,0.25);
+  border-radius: 10px;
+  padding: 14px 18px;
+  text-align: center;
+}
+.expiry-banner .expiry-icon {
+  font-size: 16px;
+  margin-right: 6px;
+}
+.expiry-banner .expiry-text {
+  font-size: 12px;
+  color: #ff6b7a;
+  line-height: 1.6;
+}
+.expiry-banner .expiry-date {
+  font-weight: 800;
+  color: #ff4757;
+  font-size: 14px;
+}
+.countdown-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+.countdown-item {
+  background: rgba(255,71,87,0.12);
+  border-radius: 8px;
+  padding: 6px 12px;
+  min-width: 52px;
+}
+.countdown-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ff4757;
+  display: block;
+}
+.countdown-label {
+  font-size: 9px;
+  color: #ff6b7a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.expired-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10,22,40,0.95);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 40px;
+}
+.expired-overlay.active {
+  display: flex;
+}
+.expired-overlay h2 {
+  font-size: 28px;
+  font-weight: 900;
+  color: #ff4757;
+  margin-bottom: 12px;
+}
+.expired-overlay p {
+  font-size: 15px;
+  color: #8899aa;
+  max-width: 400px;
+  line-height: 1.7;
+}
 </style>
 </head>
 <body>
-<div class="gate-container">
+
+<!-- Expired overlay - shown if past deadline -->
+<div class="expired-overlay" id="expired-overlay">
+  <div style="font-size:64px; margin-bottom:20px;">⏰</div>
+  <h2>此專屬方案已過期</h2>
+  <p>此專屬優惠價格已於 <strong>2026 年 5 月 31 日</strong> 到期。<br><br>如需查詢最新報價，請聯繫 Butler 團隊。<br><br>This exclusive offer expired on 31 May 2026.<br>Please contact the Butler team for updated pricing.</p>
+  <a href="https://www.butlerasia.com" style="margin-top:24px; display:inline-block; padding:12px 28px; background:linear-gradient(135deg,#00e5a0,#00c9ff); color:#0a1628; font-weight:700; border-radius:10px; text-decoration:none;">聯繫 Butler →</a>
+</div>
+
+<div class="gate-container" id="gate-container">
   <div style="margin-bottom:16px;"><img src="butler-icon.jpg" alt="Butler" style="width:72px; height:72px; border-radius:16px;"></div>
   <div style="margin-bottom:8px;"><img src="butler-logo-full.png" alt="Butler" style="height:40px; filter: brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(340deg) brightness(100%) contrast(95%);"></div>
   <div class="gate-subtitle">The AI Core for Real Estate Operations</div>
@@ -135,23 +217,73 @@ body {
     <button class="gate-btn" id="submit-btn" onclick="checkPw()">進入文件 Enter →</button>
     <div class="gate-error" id="err">密碼不正確，請重新輸入。Incorrect password.</div>
   </div>
+
+  <!-- Expiry Banner with Countdown -->
+  <div class="expiry-banner">
+    <div class="expiry-text">
+      <span class="expiry-icon">⏳</span> 此專屬優惠方案將於 <span class="expiry-date">2026 年 5 月 31 日</span> 到期<br>
+      <span style="font-size:11px; color:#8899aa;">This exclusive offer expires on 31 May 2026</span>
+    </div>
+    <div class="countdown-row" id="countdown-row">
+      <div class="countdown-item">
+        <span class="countdown-num" id="cd-days">--</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="cd-hours">--</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="cd-mins">--</span>
+        <span class="countdown-label">Mins</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="cd-secs">--</span>
+        <span class="countdown-label">Secs</span>
+      </div>
+    </div>
+  </div>
+
   <div class="gate-footer">Butler Asia &copy; 2026. All rights reserved.</div>
 </div>
-<script>
-// Simple client-side password gate
-// The hash is computed from the password to avoid plain-text in source
-// SHA-256 of "ButlerProposal123$"
-const HASH = '5e06e2b1b0f1b0c3a7d7c5e8f2a1d4b6e9c3f7a0d2b5e8c1f4a7d0b3e6c9f2';
 
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+<script>
+// Deadline: 31 May 2026, 23:59:59 HKT (UTC+8)
+const DEADLINE = new Date('2026-05-31T23:59:59+08:00').getTime();
+
+// Check if expired
+function checkExpired() {
+  const now = Date.now();
+  if (now > DEADLINE) {
+    document.getElementById('expired-overlay').classList.add('active');
+    document.getElementById('gate-container').style.display = 'none';
+    return true;
+  }
+  return false;
 }
 
+// Countdown timer
+function updateCountdown() {
+  const now = Date.now();
+  const diff = DEADLINE - now;
+  if (diff <= 0) {
+    checkExpired();
+    return;
+  }
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const secs = Math.floor((diff % (1000 * 60)) / 1000);
+  document.getElementById('cd-days').textContent = days;
+  document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+  document.getElementById('cd-mins').textContent = String(mins).padStart(2, '0');
+  document.getElementById('cd-secs').textContent = String(secs).padStart(2, '0');
+}
+
+// Password check
 async function checkPw() {
   const pw = document.getElementById('pw').value;
   if (pw === '100SitesProposal$') {
-    // Correct - redirect to proposal
     sessionStorage.setItem('butler_auth', 'true');
     window.location.href = 'proposal.html';
   } else {
@@ -172,6 +304,12 @@ document.getElementById('pw').addEventListener('keydown', function(e) {
 // If already authenticated, redirect
 if (sessionStorage.getItem('butler_auth') === 'true') {
   window.location.href = 'proposal.html';
+}
+
+// Init
+if (!checkExpired()) {
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 }
 </script>
 </body>
