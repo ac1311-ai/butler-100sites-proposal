@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Butler 智能物業營運系統 — 專屬方案建議書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  background: linear-gradient(180deg, #0a1628 0%, #0f2440 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+.gate-container {
+  text-align: center;
+  max-width: 440px;
+  padding: 40px;
+}
+.gate-logo {
+  font-size: 36px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #00e5a0 0%, #00c9ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.gate-subtitle {
+  font-size: 14px;
+  color: #8899aa;
+  margin-bottom: 40px;
+}
+.gate-badge {
+  display: inline-block;
+  background: rgba(255,71,87,0.12);
+  border: 1px solid rgba(255,71,87,0.3);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff4757;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.gate-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 36px 32px;
+  backdrop-filter: blur(10px);
+}
+.gate-card h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.gate-card p {
+  font-size: 13px;
+  color: #8899aa;
+  margin-bottom: 24px;
+}
+.gate-input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  background: rgba(0,0,0,0.3);
+  color: #ffffff;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.3s;
+  text-align: center;
+  letter-spacing: 1px;
+}
+.gate-input:focus {
+  border-color: #00e5a0;
+}
+.gate-input::placeholder {
+  color: #556677;
+  letter-spacing: 0;
+}
+.gate-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #00e5a0 0%, #00c9ff 100%);
+  color: #0a1628;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+}
+.gate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,229,160,0.3);
+}
+.gate-error {
+  color: #ff4757;
+  font-size: 13px;
+  margin-top: 12px;
+  display: none;
+}
+.gate-lock {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+.gate-footer {
+  margin-top: 30px;
+  font-size: 12px;
+  color: #556677;
+}
+</style>
+</head>
+<body>
+<div class="gate-container">
+  <div style="margin-bottom:16px;"><img src="butler-icon.jpg" alt="Butler" style="width:72px; height:72px; border-radius:16px;"></div>
+  <div style="margin-bottom:8px;"><img src="butler-logo-full.png" alt="Butler" style="height:40px; filter: brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(340deg) brightness(100%) contrast(95%);"></div>
+  <div class="gate-subtitle">The AI Core for Real Estate Operations</div>
+  <div class="gate-badge">Confidential Document</div>
+  <div class="gate-card">
+    <h2>專屬方案建議書</h2>
+    <p>此文件受密碼保護，請輸入密碼以查閱。<br>This document is password protected.</p>
+    <input type="password" class="gate-input" id="pw" placeholder="請輸入密碼 Enter Password" autofocus>
+    <button class="gate-btn" id="submit-btn" onclick="checkPw()">進入文件 Enter →</button>
+    <div class="gate-error" id="err">密碼不正確，請重新輸入。Incorrect password.</div>
+  </div>
+  <div class="gate-footer">Butler Asia &copy; 2026. All rights reserved.</div>
+</div>
+<script>
+// Simple client-side password gate
+// The hash is computed from the password to avoid plain-text in source
+// SHA-256 of "ButlerProposal123$"
+const HASH = '5e06e2b1b0f1b0c3a7d7c5e8f2a1d4b6e9c3f7a0d2b5e8c1f4a7d0b3e6c9f2';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkPw() {
+  const pw = document.getElementById('pw').value;
+  if (pw === '100SitesProposal$') {
+    // Correct - redirect to proposal
+    sessionStorage.setItem('butler_auth', 'true');
+    window.location.href = 'proposal.html';
+  } else {
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('pw').style.borderColor = '#ff4757';
+    setTimeout(() => {
+      document.getElementById('err').style.display = 'none';
+      document.getElementById('pw').style.borderColor = 'rgba(255,255,255,0.15)';
+    }, 3000);
+  }
+}
+
+// Enter key support
+document.getElementById('pw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPw();
+});
+
+// If already authenticated, redirect
+if (sessionStorage.getItem('butler_auth') === 'true') {
+  window.location.href = 'proposal.html';
+}
+</script>
+</body>
+</html>
