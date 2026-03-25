@@ -421,9 +421,13 @@ section {
 }
 
 .single-price-card .price-amount {
-  font-size: 64px;
-  font-weight: 900;
-  color: var(--butler-white);
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--butler-gray);
+  text-decoration: line-through;
+  text-decoration-color: #ff4757;
+  text-decoration-thickness: 3px;
+  opacity: 0.5;
   line-height: 1.1;
   margin: 10px 0;
 }
@@ -2822,11 +2826,12 @@ section {
   </p>
 
   <!-- Single building reference -->
-  <div class="single-price-card">
-    <div class="price-label">標準零售價 (單幢大廈)</div>
+  <div class="single-price-card" style="background:linear-gradient(135deg, rgba(100,100,100,0.06) 0%, rgba(80,80,80,0.03) 100%); border:1px dashed rgba(255,255,255,0.1); padding:24px 40px;">
+    <div style="display:inline-block; background:rgba(255,71,87,0.12); border:1px solid rgba(255,71,87,0.3); border-radius:6px; padding:3px 12px; font-size:10px; font-weight:700; color:#ff4757; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px;">僅供參考 Reference Only</div>
+    <div class="price-label" style="color:var(--butler-gray); font-size:12px;">標準零售價 (單幢大廈，非貴公司報價)</div>
     <div class="price-amount">$2,500</div>
-    <div class="price-unit">每幢 / 每月 (HKD)</div>
-    <p style="color:var(--butler-gray); font-size:13px; margin-top:12px;">包含全部功能：無限廣播、智能工單、租戶管理、AI 報告</p>
+    <div class="price-unit" style="font-size:13px;">每幢 / 每月 (HKD)</div>
+    <p style="color:var(--butler-gray); font-size:12px; margin-top:10px; opacity:0.7;">⬇ 貴公司專屬優惠價格請見下方階梯式方案 ⬇</p>
   </div>
 
   <!-- Tier pricing -->
